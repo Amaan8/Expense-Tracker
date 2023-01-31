@@ -1,9 +1,14 @@
-import { useRef, useState } from "react";
+import { useState, useRef, useContext } from "react";
+import { useHistory } from "react-router-dom";
+import AuthContext from "../store/auth-context";
 
 const Auth = () => {
+  const history = useHistory();
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmRef = useRef();
+
+  const authCtx = useContext(AuthContext);
 
   const [isLogin, setIsLogin] = useState(true);
 
@@ -48,7 +53,9 @@ const Auth = () => {
 
         throw new Error(errorMessage);
       }
+      authCtx.login(data.idToken);
       console.log(data);
+      history.replace("/home");
     } catch (error) {
       alert(error.message);
     }
@@ -59,7 +66,7 @@ const Auth = () => {
       <div className="row">
         <div className="col-md-6 offset-md-3">
           <form className="border p-3 mb-3" onSubmit={submitHandler}>
-            <h3 className="text-center">{isLogin ? "SIGN IN" : "SIGN UP"}</h3>
+            <h3 className="text-center">{isLogin ? "LOGIN" : "SIGN UP"}</h3>
             <div className="mb-3">
               <label htmlFor="email" className="form-label">
                 Email address
@@ -99,14 +106,16 @@ const Auth = () => {
               </div>
             )}
             <button type="submit" className="btn btn-info col-4 offset-4">
-              {isLogin ? "Sign In" : "Sign Up"}
+              {isLogin ? "Login" : "Sign Up"}
             </button>
           </form>
           <button
             className="btn btn-secondary col-6 offset-3"
             onClick={switchAuth}
           >
-            {isLogin ? "Create new account" : "Have a account? Login"}
+            {isLogin
+              ? "Don't have an account? Sign up"
+              : "Have a account? Login"}
           </button>
         </div>
       </div>

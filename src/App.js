@@ -3,6 +3,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import Auth from "./components/Auth";
 import Home from "./components/Home";
 import AuthContext from "./store/auth-context";
+import Forgot from "./components/Forgot";
 
 function App() {
   const authCtx = useContext(AuthContext);
@@ -21,6 +22,12 @@ function App() {
       <Route path="/home">
         {!authCtx.isLoggedIn && <Redirect to="/auth" />}
         <Home />
+      </Route>
+      <Route path="/forgot-password">
+        <Forgot />
+      </Route>
+      <Route path="*">
+        <Redirect to="/" />
       </Route>
     </Switch>
   );

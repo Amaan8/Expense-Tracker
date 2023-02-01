@@ -1,5 +1,5 @@
 import { useState, useRef, useContext } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import AuthContext from "../store/auth-context";
 
 const Auth = () => {
@@ -108,9 +108,16 @@ const Auth = () => {
             <button type="submit" className="btn btn-info col-4 offset-4">
               {isLogin ? "Login" : "Sign Up"}
             </button>
+            {isLogin && (
+              <Link to="/forgot-password">
+                <button className="btn col-8 offset-2 mt-2">
+                  Forgot Password?
+                </button>
+              </Link>
+            )}
           </form>
           <button
-            className="btn btn-secondary col-6 offset-3"
+            className="btn btn-secondary col-8 offset-2"
             onClick={switchAuth}
           >
             {isLogin

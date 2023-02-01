@@ -49,7 +49,7 @@ const Auth = () => {
       });
       const data = await response.json();
       if (!response.ok) {
-        let errorMessage = "Authentication failed!";
+        let errorMessage = data.error.message;
 
         throw new Error(errorMessage);
       }
@@ -57,7 +57,7 @@ const Auth = () => {
       console.log(data);
       history.replace("/home");
     } catch (error) {
-      alert(error.message);
+      alert(error);
     }
   };
 

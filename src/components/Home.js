@@ -1,10 +1,16 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
+import AuthContext from "../store/auth-context";
 
 const Home = () => {
   const nameRef = useRef();
   const photoRef = useRef();
+  const authCtx = useContext(AuthContext);
 
   const [profile, setProfile] = useState(false);
+
+  const logoutHandler = () => {
+    authCtx.logout();
+  };
 
   const openProfile = async () => {
     setProfile(true);
@@ -25,12 +31,18 @@ const Home = () => {
         }
       );
       const data = await response.json();
-      const user = data.users[0];
+      if (!response.ok) {
+        let errorMessage = data.error.message;
 
-      nameRef.current.value = user.displayName;
-      photoRef.current.value = user.photoUrl;
+        throw new Error(errorMessage);
+      }
+      const user = data.users[0];
+      if (user.displayName && user.photoUrl) {
+        nameRef.current.value = user.displayName;
+        photoRef.current.value = user.photoUrl;
+      }
     } catch (error) {
-      alert(error.message);
+      alert(error);
     }
   };
 
@@ -58,10 +70,45 @@ const Home = () => {
         }
       );
       const data = await response.json();
+      if (!response.ok) {
+        let errorMessage = data.error.message;
+
+        throw new Error(errorMessage);
+      }
 
       console.log(data);
     } catch (error) {
-      alert(error.message);
+      alert(error);
+    }
+  };
+
+  const verify = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyCD07qIp-EwTuHar_8Wot4gQsxQYj5Kjvk",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            requestType: "VERIFY_EMAIL",
+            idToken: token,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        let errorMessage = data.error.message;
+
+        throw new Error(errorMessage);
+      }
+      alert("Verification link sent to your Email-ID");
+      console.log(data);
+    } catch (error) {
+      alert(error);
     }
   };
 
@@ -79,6 +126,18 @@ const Home = () => {
           </p>
         )}
       </div>
+      <button
+        className="btn btn-success mt-3 col-lg-2 offset-lg-5 col-4 offset-4"
+        onClick={verify}
+      >
+        Verify Email-ID
+      </button>
+      <button
+        className="btn btn-danger mt-3 col-lg-2 offset-lg-5 col-4 offset-4"
+        onClick={logoutHandler}
+      >
+        Logout
+      </button>
       {profile && (
         <div className="container p-5">
           <div className="row">

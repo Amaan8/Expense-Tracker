@@ -6,8 +6,32 @@ const Home = () => {
 
   const [profile, setProfile] = useState(false);
 
-  const openProfile = () => {
+  const openProfile = async () => {
     setProfile(true);
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyCD07qIp-EwTuHar_8Wot4gQsxQYj5Kjvk",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            idToken: token,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      const user = data.users[0];
+
+      nameRef.current.value = user.displayName;
+      photoRef.current.value = user.photoUrl;
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   const submitHandler = async (e) => {
@@ -60,7 +84,7 @@ const Home = () => {
           <div className="row">
             <div className="col-md-6 offset-md-3">
               <form className="border p-3 mb-3" onSubmit={submitHandler}>
-                <h3 className="text-center">Contact Details</h3>
+                <h3 className="text-center">PROFILE</h3>
                 <div className="mb-3">
                   <label htmlFor="name" className="form-label">
                     Full Name

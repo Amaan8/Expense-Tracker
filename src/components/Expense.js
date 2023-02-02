@@ -5,7 +5,7 @@ const Expense = () => {
   const descriptionRef = useRef();
   const categoryRef = useRef();
 
-  const [expenses, setExpenses] = useState([]);
+  const [expenses, setExpenses] = useState({});
 
   useEffect(() => {
     getExpenses();
@@ -22,8 +22,8 @@ const Expense = () => {
 
         throw new Error(errorMessage);
       }
-      const expensesArr = Object.values(data);
-      setExpenses(expensesArr);
+      console.log(data);
+      setExpenses(data);
     } catch (error) {
       alert(error);
     }
@@ -52,10 +52,41 @@ const Expense = () => {
         throw new Error(errorMessage);
       }
       console.log(data);
+      getExpenses();
+      amountRef.current.value = "";
+      descriptionRef.current.value = "";
+      categoryRef.current.value = "";
     } catch (error) {
       alert(error);
     }
-    setExpenses((prevState) => [...prevState, expense]);
+  };
+
+  const deleteExpense = async (expense) => {
+    try {
+      const response = await fetch(
+        `https://expense-tracker-aab49-default-rtdb.firebaseio.com/expenses/${expense}.json`,
+        {
+          method: "DELETE",
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        let errorMessage = data.error.message;
+        throw new Error(errorMessage);
+      }
+      console.log(data);
+      getExpenses();
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  const editExpense = async (expense) => {
+    amountRef.current.value = expenses[expense].amount;
+    descriptionRef.current.value = expenses[expense].description;
+    categoryRef.current.value = expenses[expense].category;
+
+    deleteExpense(expense);
   };
 
   return (
@@ -103,12 +134,26 @@ const Expense = () => {
               Add Expense
             </button>
           </form>
-          <ul className="list-unstyled text-center">
-            {expenses.map((expense, index) => (
-              <li key={index}>
-                Rs {expense.amount} : {expense.description} : {expense.category}
-              </li>
-            ))}
+          <ul className="list-group">
+            {expenses &&
+              Object.keys(expenses).map((expense) => (
+                <li key={expense} id={expense} className="list-group-item">
+                  Rs {expenses[expense].amount} :{" "}
+                  {expenses[expense].description} : {expenses[expense].category}
+                  <button
+                    className="btn btn-danger float-end"
+                    onClick={() => deleteExpense(expense)}
+                  >
+                    Delete
+                  </button>
+                  <button
+                    className="btn btn-warning float-end mx-2"
+                    onClick={() => editExpense(expense)}
+                  >
+                    Edit
+                  </button>
+                </li>
+              ))}
           </ul>
         </div>
       </div>

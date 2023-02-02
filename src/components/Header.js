@@ -10,23 +10,37 @@ const Header = () => {
   };
 
   return (
-    <nav className="navbar bg-light">
+    <nav className="navbar navbar-expand-md bg-body-tertiary">
       <div className="container-fluid px-5">
-        <h3>Welcome to Expense Tracker!</h3>
-        <div className="d-flex ms-auto">
-          <Link to="/home">
-            <button className="btn">Home</button>
-          </Link>
-          <Link to="/profile">
-            <button className="btn">Profile</button>
-          </Link>
-          {authCtx.isLoggedIn && (
-            <Link to="/auth">
-              <button className="btn btn-info" onClick={logoutHandler}>
-                Logout
-              </button>
-            </Link>
-          )}
+        <h3 className="navbar-brand">Welcome to Expense Tracker!</h3>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav ms-auto">
+            <li className="nav-item px-3">
+              <Link to="/home" className="text-decoration-none text-black">
+                Home
+              </Link>
+            </li>
+            <li className="nav-item px-3">
+              <Link to="/profile" className="text-decoration-none text-black">
+                Profile
+              </Link>
+            </li>
+            {authCtx.isLoggedIn && (
+              <li className="nav-item px-3" onClick={logoutHandler}>
+                <Link to="/auth" className="text-decoration-none text-black">
+                  Logout
+                </Link>
+              </li>
+            )}
+          </ul>
         </div>
       </div>
     </nav>

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const Expense = () => {
   const amountRef = useRef();
@@ -7,7 +7,29 @@ const Expense = () => {
 
   const [expenses, setExpenses] = useState([]);
 
-  const submitHandler = (e) => {
+  useEffect(() => {
+    getExpenses();
+  }, []);
+
+  const getExpenses = async () => {
+    try {
+      const response = await fetch(
+        "https://expense-tracker-aab49-default-rtdb.firebaseio.com/expenses.json"
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        let errorMessage = data.error.message;
+
+        throw new Error(errorMessage);
+      }
+      const expensesArr = Object.values(data);
+      setExpenses(expensesArr);
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  const submitHandler = async (e) => {
     e.preventDefault();
 
     const expense = {
@@ -15,6 +37,24 @@ const Expense = () => {
       description: descriptionRef.current.value,
       category: categoryRef.current.value,
     };
+    try {
+      const response = await fetch(
+        "https://expense-tracker-aab49-default-rtdb.firebaseio.com/expenses.json",
+        {
+          method: "POST",
+          body: JSON.stringify(expense),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        let errorMessage = data.error.message;
+
+        throw new Error(errorMessage);
+      }
+      console.log(data);
+    } catch (error) {
+      alert(error);
+    }
     setExpenses((prevState) => [...prevState, expense]);
   };
 

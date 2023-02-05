@@ -1,14 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { expenseActions } from "../store/expenses";
 
 const Expense = () => {
   const amountRef = useRef();
   const descriptionRef = useRef();
   const categoryRef = useRef();
 
-  const [expenses, setExpenses] = useState({});
+  const expenses = useSelector((state) => state.expenses.expenses);
+  const premium = useSelector((state) => state.expenses.premium);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getExpenses();
+    // eslint-disable-next-line
   }, []);
 
   const getExpenses = async () => {
@@ -23,7 +28,7 @@ const Expense = () => {
         throw new Error(errorMessage);
       }
       console.log(data);
-      setExpenses(data);
+      dispatch(expenseActions.setExpenses(data));
     } catch (error) {
       alert(error);
     }
@@ -37,6 +42,7 @@ const Expense = () => {
       description: descriptionRef.current.value,
       category: categoryRef.current.value,
     };
+
     try {
       const response = await fetch(
         "https://expense-tracker-aab49-default-rtdb.firebaseio.com/expenses.json",
@@ -93,6 +99,11 @@ const Expense = () => {
     <div className="container p-5">
       <div className="row">
         <div className="col-md-6 offset-md-3">
+          {premium && (
+            <button className="btn btn-info col-4 offset-4 mb-3">
+              Activate Premium
+            </button>
+          )}
           <form className="border p-3 mb-3" onSubmit={submitHandler}>
             <h3 className="text-center">EXPENSES</h3>
             <div className="mb-3">

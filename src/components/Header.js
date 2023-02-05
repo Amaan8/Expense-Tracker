@@ -1,12 +1,13 @@
-import { useContext } from "react";
 import { Link } from "react-router-dom";
-import AuthContext from "../store/auth-context";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../store/auth";
 
 const Header = () => {
-  const authCtx = useContext(AuthContext);
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state) => state.auth.isAuthenticated);
 
   const logoutHandler = () => {
-    authCtx.logout();
+    dispatch(authActions.logout());
   };
 
   return (
@@ -33,7 +34,7 @@ const Header = () => {
                 Profile
               </Link>
             </li>
-            {authCtx.isLoggedIn && (
+            {isLoggedIn && (
               <li className="nav-item px-3" onClick={logoutHandler}>
                 <Link to="/auth" className="text-decoration-none text-black">
                   Logout

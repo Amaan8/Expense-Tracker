@@ -1,33 +1,32 @@
-import { useContext } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Header from "./components/Header";
 import Auth from "./components/Auth";
 import Home from "./components/Home";
-import AuthContext from "./store/auth-context";
 import Profile from "./components/Profile";
 import Forgot from "./components/Forgot";
 
 function App() {
-  const authCtx = useContext(AuthContext);
+  const isLoggedIn = useSelector((state) => state.auth.isAuthenticated);
 
   return (
     <>
       <Header />
       <Switch>
         <Route exact path="/">
-          {!authCtx.isLoggedIn && <Redirect to="/auth" />}
-          {authCtx.isLoggedIn && <Redirect to="/home" />}
+          {!isLoggedIn && <Redirect to="/auth" />}
+          {isLoggedIn && <Redirect to="/home" />}
         </Route>
-        {!authCtx.isLoggedIn && (
+        {!isLoggedIn && (
           <Route path="/auth">
             <Auth />
           </Route>
         )}
         <Route path="/home">
-          {!authCtx.isLoggedIn && <Redirect to="/auth" />}
+          {!isLoggedIn && <Redirect to="/auth" />}
           <Home />
         </Route>
-        {authCtx.isLoggedIn && (
+        {isLoggedIn && (
           <Route path="/profile">
             <Profile />
           </Route>

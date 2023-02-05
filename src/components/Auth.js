@@ -1,6 +1,7 @@
-import { useState, useRef, useContext } from "react";
+import { useState, useRef } from "react";
 import { useHistory, Link } from "react-router-dom";
-import AuthContext from "../store/auth-context";
+import { useDispatch } from "react-redux";
+import { authActions } from "../store/auth";
 
 const Auth = () => {
   const history = useHistory();
@@ -8,7 +9,7 @@ const Auth = () => {
   const passwordRef = useRef();
   const confirmRef = useRef();
 
-  const authCtx = useContext(AuthContext);
+  const dispatch = useDispatch();
 
   const [isLogin, setIsLogin] = useState(true);
 
@@ -53,7 +54,7 @@ const Auth = () => {
 
         throw new Error(errorMessage);
       }
-      authCtx.login(data.idToken);
+      dispatch(authActions.login(data.idToken));
       console.log(data);
       history.replace("/home");
     } catch (error) {

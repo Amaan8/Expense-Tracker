@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { expenseActions } from "../store/expenses";
+import { themeActions } from "../store/theme";
 
 const Expense = () => {
   const amountRef = useRef();
@@ -95,12 +96,29 @@ const Expense = () => {
     deleteExpense(expense);
   };
 
+  const themeHandler = () => {
+    dispatch(themeActions.toggleTheme());
+  };
+
+  const downloadExpenses = (e) => {
+    const arr = [["Amount", "Description", "Category"]];
+    Object.values(expenses).map((item) => arr.push(Object.values(item)));
+    const expenseData = arr.map((item) => item.join(",")).join("\n");
+    console.log(expenseData);
+
+    const blob = new Blob([expenseData]);
+    e.target.href = URL.createObjectURL(blob);
+  };
+
   return (
     <div className="container p-5">
       <div className="row">
         <div className="col-md-6 offset-md-3">
           {premium && (
-            <button className="btn btn-info col-4 offset-4 mb-3">
+            <button
+              className="btn btn-info col-4 offset-4 mb-3"
+              onClick={themeHandler}
+            >
               Activate Premium
             </button>
           )}
@@ -165,6 +183,16 @@ const Expense = () => {
                   </button>
                 </li>
               ))}
+            {expenses && (
+              <a
+                className="btn btn-info col-4 offset-4 mt-3"
+                onClick={downloadExpenses}
+                download="expenses.csv"
+                href="/"
+              >
+                Download File
+              </a>
+            )}
           </ul>
         </div>
       </div>

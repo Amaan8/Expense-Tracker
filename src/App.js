@@ -8,9 +8,10 @@ import Forgot from "./components/Forgot";
 
 function App() {
   const isLoggedIn = useSelector((state) => state.auth.isAuthenticated);
+  const theme = useSelector((state) => state.theme.theme);
 
   return (
-    <>
+    <div className={theme ? "bg-dark text-white min-vh-100" : ""}>
       <Header />
       <Switch>
         <Route exact path="/">
@@ -38,7 +39,7 @@ function App() {
           <Redirect to="/" />
         </Route>
       </Switch>
-    </>
+    </div>
   );
 }
 

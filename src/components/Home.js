@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Expense from "./Expense";
 
 const Home = () => {
+  const isProfileCompleted = useSelector(
+    (state) => state.auth.isProfileCompleted
+  );
+
   const verify = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -34,13 +39,15 @@ const Home = () => {
 
   return (
     <>
-      <p className="bg-info p-2 m-2 rounded float-end">
-        Your profile is incomplete.
-        <Link className="text-danger text-decoration-none" to="/profile">
-          {" "}
-          Complete now
-        </Link>
-      </p>
+      {!isProfileCompleted && (
+        <p className="bg-info p-2 m-2 rounded float-end">
+          Your profile is incomplete.
+          <Link className="text-danger text-decoration-none" to="/profile">
+            {" "}
+            Complete now
+          </Link>
+        </p>
+      )}
       <button
         className="btn btn-success mt-5 col-lg-2 offset-lg-5 col-4 offset-4"
         onClick={verify}

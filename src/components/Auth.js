@@ -55,7 +55,8 @@ const Auth = () => {
         throw new Error(errorMessage);
       }
       dispatch(authActions.login(data.idToken));
-      console.log(data);
+      localStorage.setItem("token", data.idToken);
+      localStorage.setItem("email", data.email);
       history.replace("/home");
     } catch (error) {
       alert(error);

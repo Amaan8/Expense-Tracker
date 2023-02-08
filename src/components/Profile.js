@@ -1,11 +1,15 @@
 import { useRef, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { authActions } from "../store/auth";
 
 const Profile = () => {
+  const dispatch = useDispatch();
   const nameRef = useRef();
   const photoRef = useRef();
 
   useEffect(() => {
     getDetails();
+    // eslint-disable-next-line
   }, []);
 
   const getDetails = async () => {
@@ -34,6 +38,7 @@ const Profile = () => {
       if (user.displayName && user.photoUrl) {
         nameRef.current.value = user.displayName;
         photoRef.current.value = user.photoUrl;
+        dispatch(authActions.completeProfile());
       }
     } catch (error) {
       alert(error);
@@ -69,7 +74,7 @@ const Profile = () => {
 
         throw new Error(errorMessage);
       }
-
+      dispatch(authActions.completeProfile());
       console.log(data);
     } catch (error) {
       alert(error);

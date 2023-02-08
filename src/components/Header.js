@@ -9,6 +9,8 @@ const Header = () => {
 
   const logoutHandler = () => {
     dispatch(authActions.logout());
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
   };
 
   const themeHandler = () => {

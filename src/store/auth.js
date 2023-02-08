@@ -5,6 +5,7 @@ const tokenId = localStorage.getItem("token");
 const initialState = {
   token: tokenId,
   isAuthenticated: !!tokenId,
+  isProfileCompleted: false,
 };
 
 const authSlice = createSlice({
@@ -14,12 +15,13 @@ const authSlice = createSlice({
     login(state, action) {
       state.token = action.payload;
       state.isAuthenticated = true;
-      localStorage.setItem("token", action.payload);
     },
     logout(state) {
       state.token = "";
       state.isAuthenticated = false;
-      localStorage.removeItem("token");
+    },
+    completeProfile(state) {
+      state.isProfileCompleted = true;
     },
   },
 });

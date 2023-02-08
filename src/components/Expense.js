@@ -12,6 +12,9 @@ const Expense = () => {
   const premium = useSelector((state) => state.expenses.premium);
   const dispatch = useDispatch();
 
+  const email = localStorage.getItem("email");
+  const user = email.substring(0, email.indexOf("."));
+
   useEffect(() => {
     getExpenses();
     // eslint-disable-next-line
@@ -20,7 +23,7 @@ const Expense = () => {
   const getExpenses = async () => {
     try {
       const response = await fetch(
-        "https://expense-tracker-aab49-default-rtdb.firebaseio.com/expenses.json"
+        `https://expense-tracker-aab49-default-rtdb.firebaseio.com/expenses-${user}.json`
       );
       const data = await response.json();
       if (!response.ok) {
@@ -28,8 +31,11 @@ const Expense = () => {
 
         throw new Error(errorMessage);
       }
-      console.log(data);
-      dispatch(expenseActions.setExpenses(data));
+      if (data) {
+        dispatch(expenseActions.setExpenses(data));
+      } else {
+        dispatch(expenseActions.setExpenses({}));
+      }
     } catch (error) {
       alert(error);
     }
@@ -46,7 +52,7 @@ const Expense = () => {
 
     try {
       const response = await fetch(
-        "https://expense-tracker-aab49-default-rtdb.firebaseio.com/expenses.json",
+        `https://expense-tracker-aab49-default-rtdb.firebaseio.com/expenses-${user}.json`,
         {
           method: "POST",
           body: JSON.stringify(expense),
@@ -71,7 +77,7 @@ const Expense = () => {
   const deleteExpense = async (expense) => {
     try {
       const response = await fetch(
-        `https://expense-tracker-aab49-default-rtdb.firebaseio.com/expenses/${expense}.json`,
+        `https://expense-tracker-aab49-default-rtdb.firebaseio.com/expenses-${user}/${expense}.json`,
         {
           method: "DELETE",
         }
@@ -96,15 +102,15 @@ const Expense = () => {
     deleteExpense(expense);
   };
 
-  const themeHandler = () => {
+  const themeHandler = (e) => {
     dispatch(themeActions.toggleTheme());
+    e.target.remove();
   };
 
   const downloadExpenses = (e) => {
     const arr = [["Amount", "Description", "Category"]];
     Object.values(expenses).map((item) => arr.push(Object.values(item)));
     const expenseData = arr.map((item) => item.join(",")).join("\n");
-    console.log(expenseData);
 
     const blob = new Blob([expenseData]);
     e.target.href = URL.createObjectURL(blob);
@@ -183,7 +189,7 @@ const Expense = () => {
                   </button>
                 </li>
               ))}
-            {expenses && (
+            {premium && expenses && (
               <a
                 className="btn btn-info col-4 offset-4 mt-3"
                 onClick={downloadExpenses}
